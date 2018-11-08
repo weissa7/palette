@@ -74,13 +74,17 @@ public class PaletteForm {
                     noteLabel.setText("Awaiting MIDI input...");
 
                     chord = new ArrayList<String>();
+                    recordButton.setEnabled(false);
+                    stopButton.setEnabled(true);
                 } catch (InvalidMidiDataException imde) {
                     System.out.println("Invalid Midi exception.");
                 } catch (MidiUnavailableException mue) {
                     System.out.println("Midi Unavailable exception.");
+                } catch (Exception ex){
+                    System.out.println("Exception - MIDI Keyboard not found?");
+                    noteLabel.setText("MIDI Keyboard not found.");
                 }
-                recordButton.setEnabled(false);
-                stopButton.setEnabled(true);
+
             }
         });
         stopButton.addActionListener(new ActionListener() {
@@ -96,11 +100,12 @@ public class PaletteForm {
                     //save the sequence and stick it in a file
                     Sequence tmp = sequencer.getSequence();
                     MidiSystem.write(tmp, 0, new File(midiFile));
+                    recordButton.setEnabled(true);
+                    stopButton.setEnabled(false);
                 } catch (IOException i) {
                     System.out.println("End exception.");
                 }
-                recordButton.setEnabled(true);
-                stopButton.setEnabled(false);
+
             }
         });
 
@@ -127,7 +132,7 @@ public class PaletteForm {
 
             for (Info inf : info) {
                 String name = inf.getName().replace(" ", "");
-                //System.out.println("\"NAME:" + name + "\"");
+                System.out.println("\"NAME:" + name + "\"");
                 if (name.contains(inputName) && !inputFound) {
                     input = MidiSystem.getMidiDevice(inf);
                     inputFound = true;
