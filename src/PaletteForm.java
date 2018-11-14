@@ -4,6 +4,8 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 
+import java.awt.FileDialog;
+
 import java.util.*; //this includes Scanner
 
 import javax.sound.midi.MidiDevice;
@@ -18,6 +20,7 @@ public class PaletteForm {
     private JButton recordButton;
     private JButton stopButton;
     private JLabel noteLabel;
+    private JButton uploadButton;
 
     private static String inputName  = "Keyboard";
     private static String outputName = "Gervill";
@@ -109,6 +112,20 @@ public class PaletteForm {
             }
         });
 
+        //Opens a window to search for a file and then gets the file path for the "uploaded" file
+        uploadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FileDialog fd = new FileDialog(new JFrame());
+                fd.setVisible(true);
+                File[] f = fd.getFiles();
+                String filePath;
+                if(f.length > 0){
+                    filePath = fd.getFiles()[0].getAbsolutePath();
+                }
+
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -148,6 +165,10 @@ public class PaletteForm {
             e.printStackTrace();
         }
     }
+
+//    private void createUIComponents() {
+//        // TODO: place custom component creation code here
+//    }
 
 
     private class MyMidiDevice implements Transmitter, Receiver
