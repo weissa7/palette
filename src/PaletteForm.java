@@ -1,8 +1,7 @@
 import javax.sound.midi.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 import java.awt.FileDialog;
 
@@ -107,24 +106,56 @@ public class PaletteForm {
                     stopButton.setEnabled(false);
                 } catch (IOException i) {
                     System.out.println("End exception.");
+                } catch (NullPointerException npe) {
+                    System.out.println("Null Pointer Exception");
                 }
 
             }
         });
 
-        //Opens a window to search for a file and then gets the file path for the "uploaded" file
+        //Allows user to open and then play a file through the selected output device
+
         uploadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FileDialog fd = new FileDialog(new JFrame());
-                fd.setVisible(true);
-                File[] f = fd.getFiles();
-                String filePath;
-                if(f.length > 0){
-                    filePath = fd.getFiles()[0].getAbsolutePath();
+
+                init();
+
+                try{
+                    FileDialog fd = new FileDialog(new JFrame());
+                    fd.setVisible(true);
+                    File[] f = fd.getFiles();
+                    String filePath = null;
+                    if (f.length > 0) {
+                        filePath = fd.getFiles()[0].getAbsolutePath();
+                    }
+
+                    File playFile = new File(filePath);
+                    InputStream ios = new BufferedInputStream(new FileInputStream(playFile));
+
+                    sequencer = MidiSystem.getSequencer(false);
+                    sequencer.setSequence(ios);
+                    sequencer.open();
+                    output.open();
+                    receiver = output.getReceiver();
+                    sequencer.getTransmitter().setReceiver(receiver);
+
+                    sequencer.start();
+
+                } catch (NullPointerException npe) {
+                    System.out.println("No File Chosen");
+                    noteLabel.setText("No file uploaded.  Please press 'Record' to start a session or upload a file.");
+                } catch (InvalidMidiDataException imde) {
+                    System.out.println("Invalid Midi Data Exception");
+                } catch (IOException ioe) {
+                    System.out.println("End Exception");
+                } catch (MidiUnavailableException mue){
+                    System.out.println("Midi Unavailable Exception");
                 }
 
+
             }
+
         });
     }
 
@@ -165,10 +196,6 @@ public class PaletteForm {
             e.printStackTrace();
         }
     }
-
-//    private void createUIComponents() {
-//        // TODO: place custom component creation code here
-//    }
 
 
     private class MyMidiDevice implements Transmitter, Receiver

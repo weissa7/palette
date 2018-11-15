@@ -24,7 +24,7 @@
             </constraints>
             <properties>
               <enabled value="true"/>
-              <text value="⏺"/>
+              <text value="Record"/>
               <visible value="true"/>
             </properties>
             <clientProperties>
@@ -38,7 +38,7 @@
             </constraints>
             <properties>
               <enabled value="true"/>
-              <text value="⏹"/>
+              <text value="Stop"/>
               <visible value="true"/>
             </properties>
           </component>
@@ -68,7 +68,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Press 'Record' to start the MIDI session."/>
+              <text value="Press 'Record' to start the MIDI session or 'Upload' to upload your own file."/>
             </properties>
           </component>
         </children>
