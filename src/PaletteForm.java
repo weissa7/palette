@@ -76,6 +76,7 @@ public class PaletteForm {
                     noteLabel.setText("Awaiting MIDI input...");
 
                     chord = new ArrayList<String>();
+
                     recordButton.setEnabled(false);
                     stopButton.setEnabled(true);
                 } catch (InvalidMidiDataException imde) {
@@ -132,15 +133,103 @@ public class PaletteForm {
 
                     File playFile = new File(filePath);
                     InputStream ios = new BufferedInputStream(new FileInputStream(playFile));
-
-                    sequencer = MidiSystem.getSequencer(false);
+                    MidiToPalette runner = new MidiToPalette();
+                    /*sequencer = MidiSystem.getSequencer(false);
                     sequencer.setSequence(ios);
                     sequencer.open();
                     output.open();
+                    //Sequence seq = sequencer.getSequence();
                     receiver = output.getReceiver();
                     sequencer.getTransmitter().setReceiver(receiver);
+                    sequencer.start();*/
 
-                    sequencer.start();
+                    Sequence sequence = MidiSystem.getSequence(ios);
+
+                    int NOTE_ON = 0x90;
+                    int NOTE_OFF = 0x80;
+                    String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+
+
+                    int trackNumber = 0;
+                    for (Track track :  sequence.getTracks()) {
+                        trackNumber++;
+                        System.out.println("Track " + trackNumber + ": size = " + track.size());
+                        System.out.println();
+                        for (int i=0; i < track.size(); i++) {
+                            MidiEvent event = track.get(i);
+                            System.out.print("@" + event.getTick() + " ");
+                            MidiMessage message = event.getMessage();
+                            if (message instanceof ShortMessage) {
+                                ShortMessage sm = (ShortMessage) message;
+                                System.out.print("Channel: " + sm.getChannel() + " ");
+                                if (sm.getCommand() == NOTE_ON) {
+                                    int key = sm.getData1();
+                                    int octave = (key / 12)-1;
+                                    int note = key % 12;
+                                    String noteName = NOTE_NAMES[note];
+                                    int velocity = sm.getData2();
+                                    System.out.println("Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
+                                    runner.add(note, velocity);
+                                } else if (sm.getCommand() == NOTE_OFF) {
+                                    int key = sm.getData1();
+                                    int octave = (key / 12)-1;
+                                    int note = key % 12;
+                                    String noteName = NOTE_NAMES[note];
+                                    int velocity = sm.getData2();
+                                    System.out.println("Note off, " + noteName + octave + " key=" + key + " velocity: " + velocity);
+                                } else {
+                                    System.out.println("Command:" + sm.getCommand());
+                                }
+                            } else {
+                                System.out.println("Other message: " + message.getClass());
+                            }
+                        }
+
+                        System.out.println();
+                    }
+
+                    /*for (Track track : seq.getTracks()) {
+                        for(int i = 0; i < track.size(); i++) {
+                            MidiEvent event = track.get(i);
+                            MidiMessage message = event.getMessage();
+                            int NOTE_ON = 0x90;
+                            int NOTE_OFF = 0x80;
+                            System.out.println("Test");
+
+                            if (message instanceof ShortMessage) {
+                                ShortMessage sm = (ShortMessage) message;
+                                System.out.println("Sm");
+                                if (sm.getCommand() == NOTE_ON) {
+                                    int key = sm.getData1();
+                                    int octave = (key / 12)-1;
+                                    int note = key % 12;
+                                    //String noteName = NOTE_NAMES[note];
+                                    int velocity = sm.getData2();
+                                    System.out.println(event.getTick() + " " + sm.getChannel() + " " + key + " " + octave + " " + note + " " + velocity);
+                                    // When velocity is above zero, the key was pressed
+                                    // Add to chord
+                                    if (velocity > 0) {
+                                        System.out.println("Adding note");
+                                        runner.add(note, velocity);
+                                    }
+
+                                } else if (sm.getCommand() == NOTE_OFF) {
+                                    int key = sm.getData1();
+                                    int octave = (key / 12)-1;
+                                    int note = key % 12;
+                                    //String noteName = NOTE_NAMES[note];
+                                    int velocity = sm.getData2();
+                                    System.out.println("Note off, " + octave + " key=" + key + " velocity: " + velocity);
+                                }
+
+                            }
+                        }
+                    }*/
+
+                    runner.printMe();
+
+
+
 
                 } catch (NullPointerException npe) {
                     System.out.println("No File Chosen");
@@ -149,9 +238,9 @@ public class PaletteForm {
                     System.out.println("Invalid Midi Data Exception");
                 } catch (IOException ioe) {
                     System.out.println("End Exception");
-                } catch (MidiUnavailableException mue){
+                } /*catch (MidiUnavailableException mue){
                     System.out.println("Midi Unavailable Exception");
-                }
+                }*/
 
 
             }
