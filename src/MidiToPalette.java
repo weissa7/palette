@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,6 +12,7 @@ public class MidiToPalette {
     private int[] noteCounts;
     private ArrayList<Integer>[] velocityHistory;
     private HSBColor[] palette;
+    private static final int MAX_VELOCITY = 127;
 
     public MidiToPalette() {
         noteCounts = new int[12];
@@ -78,8 +80,8 @@ public class MidiToPalette {
 
         float[] normalizedVelocity = normalizeVector(sortedVel);
 
-        palette[0].setSaturation(normalizedVelocity[0]);
-        palette[0].setBrightness(normalizedVelocity[0] * normalizedVelocity[0]);
+        palette[0].setSaturation(normalizedVelocity[0] * ((sortedVel[0] * 100) / MAX_VELOCITY));
+        palette[0].setBrightness(normalizedVelocity[0] * ((sortedVel[0] * 100) / MAX_VELOCITY));
 
         // perform algorithm 0-4 times, depending on number of unique notes
         for (int i = 1; i < 5 && i < uniqueNotes; i++) {
@@ -103,8 +105,10 @@ public class MidiToPalette {
             System.out.println("NewHue: " + newHue);
 
             palette[i].setHue(newHue);
-            palette[i].setSaturation(normalizedVelocity[i] * normalizedVelocity[i]);
-            palette[i].setBrightness(normalizedVelocity[i] * normalizedVelocity[i]);
+            palette[i].setSaturation(normalizedVelocity[i] * ((sortedVel[i] * 100) / MAX_VELOCITY) );
+
+            System.out.println("SortedVel " + sortedVel[i]);
+            palette[i].setBrightness(normalizedVelocity[i] * ((sortedVel[i] * 100) / MAX_VELOCITY) );
         }
     }
 
@@ -149,5 +153,13 @@ public class MidiToPalette {
         System.out.println("]");
         for(int i = 0; i < 5; i++)
             System.out.print("{" + palette[i].getString() + "} ");
+    }
+
+    public Color[] getColors() {
+        Color[] colors = new Color[5];
+        for(int i = 0; i < colors.length; i++) {
+            colors[i] = palette[i].getColor();
+        }
+        return colors;
     }
 }

@@ -1,11 +1,11 @@
 import javax.sound.midi.*;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
-import java.awt.FileDialog;
-
 import java.util.*; //this includes Scanner
+import java.util.concurrent.TimeUnit;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
@@ -20,6 +20,12 @@ public class PaletteForm {
     private JButton stopButton;
     private JLabel noteLabel;
     private JButton uploadButton;
+    private JPanel colorPanel;
+    private JPanel color0;
+    private JPanel color1;
+    private JPanel color2;
+    private JPanel color3;
+    private JPanel color4;
 
     private static String inputName  = "Keyboard";
     private static String outputName = "Gervill";
@@ -170,6 +176,7 @@ public class PaletteForm {
                                     int velocity = sm.getData2();
                                     System.out.println("Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
                                     runner.add(note, velocity);
+
                                 } else if (sm.getCommand() == NOTE_OFF) {
                                     int key = sm.getData1();
                                     int octave = (key / 12)-1;
@@ -227,6 +234,16 @@ public class PaletteForm {
                     }*/
 
                     runner.printMe();
+
+                    Color[] colors = runner.getColors();
+
+                    System.out.println(colors[0]);
+
+                    color0.setBackground(colors[0]);
+                    color1.setBackground(colors[1]);
+                    color2.setBackground(colors[2]);
+                    color3.setBackground(colors[3]);
+                    color4.setBackground(colors[4]);
 
 
 
