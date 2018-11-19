@@ -130,6 +130,7 @@ public class PaletteForm {
 
                 try{
                     FileDialog fd = new FileDialog(new JFrame());
+                    fd.setFile("*.mid");
                     fd.setVisible(true);
                     File[] f = fd.getFiles();
                     String filePath = null;
