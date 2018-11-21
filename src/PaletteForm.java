@@ -5,7 +5,6 @@ import java.awt.event.*;
 import java.io.*;
 
 import java.util.*; //this includes Scanner
-import java.util.concurrent.TimeUnit;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
@@ -27,7 +26,7 @@ public class PaletteForm {
     private JPanel color3;
     private JPanel color4;
 
-    private static String inputName  = "Keyboard";
+    private static String inputName  = "hw";
     private static String outputName = "Gervill";
     private MidiDevice input;
     private MidiDevice output;
@@ -38,6 +37,8 @@ public class PaletteForm {
     private Receiver receiver;
     private MyMidiDevice myDevice;
     private ArrayList<String> chord;
+    //NoteDistance toColor;
+    ColorDrift toColor;
 
     public PaletteForm() {
 
@@ -55,7 +56,7 @@ public class PaletteForm {
 
                     // input is instantiated in the init() method
                     input.open();
-
+                    output.open();
 
                     transmitter = input.getTransmitter();
 
@@ -67,6 +68,9 @@ public class PaletteForm {
 
                     // Output info fed through custom device to proper receiver
                     myDevice.setReceiver(receiver);
+
+                    Receiver out_receiver = output.getReceiver();
+                    myDevice.setReceiver(out_receiver);
 
                     // Create a new sequence
                     Sequence seq = new Sequence(Sequence.PPQ, 24);
@@ -82,6 +86,8 @@ public class PaletteForm {
                     noteLabel.setText("Awaiting MIDI input...");
 
                     chord = new ArrayList<String>();
+                    //toColor = new NoteDistance();
+                    toColor = new ColorDrift();
 
                     recordButton.setEnabled(false);
                     stopButton.setEnabled(true);
@@ -140,7 +146,7 @@ public class PaletteForm {
 
                     File playFile = new File(filePath);
                     InputStream ios = new BufferedInputStream(new FileInputStream(playFile));
-                    MidiToPalette runner = new MidiToPalette();
+                    ColorDrift runner = new ColorDrift();
                     /*sequencer = MidiSystem.getSequencer(false);
                     sequencer.setSequence(ios);
                     sequencer.open();
@@ -176,7 +182,7 @@ public class PaletteForm {
                                     String noteName = NOTE_NAMES[note];
                                     int velocity = sm.getData2();
                                     System.out.println("Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
-                                    runner.add(note, velocity);
+                                    runner.add(note, velocity, octave);
 
                                 } else if (sm.getCommand() == NOTE_OFF) {
                                     int key = sm.getData1();
@@ -218,7 +224,7 @@ public class PaletteForm {
                                     // Add to chord
                                     if (velocity > 0) {
                                         System.out.println("Adding note");
-                                        runner.add(note, velocity);
+                                        runner.add(note, velocity, octave);
                                     }
 
                                 } else if (sm.getCommand() == NOTE_OFF) {
@@ -234,7 +240,7 @@ public class PaletteForm {
                         }
                     }*/
 
-                    runner.printMe();
+
 
                     Color[] colors = runner.getColors();
 
@@ -347,32 +353,42 @@ public class PaletteForm {
 
                     // When velocity is above zero, the key was pressed
                     // Add to chord
-                    if (velocity > 0) {
+                    if (velocity > 0 && !chord.contains(noteName + octave)) {
                         chord.add(noteName + octave);
+                        toColor.add(note, velocity, octave);
                     }
 
                     // When velocity is zero, the key was released
                     // Remove from chord
-                    if (velocity == 0 && chord.contains(noteName + octave)) {
+                    if (velocity == 0) {
                         chord.remove(noteName + octave);
                     }
 
                     // Display chord
                     noteLabel.setText(chord.toString());
 
+                    Color[] colors = toColor.getColors();
+
+                    color0.setBackground(colors[0]);
+                    color1.setBackground(colors[1]);
+                    color2.setBackground(colors[2]);
+                    color3.setBackground(colors[3]);
+                    color4.setBackground(colors[4]);
+
 
                 }
                 // Never used, should probably be removed
-                /*else if (sm.getCommand() == NOTE_OFF) {
+                else if (sm.getCommand() == NOTE_OFF) {
                     int key = sm.getData1();
                     int octave = (key / 12)-1;
                     int note = key % 12;
                     String noteName = NOTE_NAMES[note];
                     int velocity = sm.getData2();
-                    System.out.println("Note off, " + noteName + octave + " key=" + key + " velocity: " + velocity);
+                    //System.out.println("Note off, " + noteName + octave + " key=" + key + " velocity: " + velocity);
+                    chord.remove(noteName + octave);
                 } else {
                     //System.out.println("Command:" + sm.getCommand());
-                } */
+                }
             } else {
                 System.out.println("Other message: " + message.getClass());
             }

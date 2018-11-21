@@ -4,17 +4,38 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
-public class MidiToPalette {
+/**
+ * The NoteDistance class is the first implemented algorithm for generating a color
+ * palette from MIDI input.
+ *
+ * The algorithm uses a random seed based on the most played note. From this 'base
+ * note', the algorithm determines the 'color distance' of the next-most popular
+ * note. It then repeats for up to 4 notes, generating 5 colors.
+ *
+ * The algorithm reliably creates a color palette for any MIDI sequence, however,
+ * does not work well in real-time, due to the base note changing frequently.
+ *
+ * @author Aaron Weiss, Alex Cretella
+ * @version 1.0
+ * @since 2018-11-18
+ */
 
-    //Store a history of notes played
-    //[0  1   2  3  4   5  6   7  8   9  10  11]
-    //[C, C#, D, D#, E, F, F#, G, G#, A, A#, B,]
+public class NoteDistance implements PaletteAlgorithm {
+
+    // Store a history of notes played
+    // [ 0  1   2  3   4  5  6   7  8   9  10  11 ]
+    // [ C, C#, D, D#, E, F, F#, G, G#, A, A#,  B ]
     private int[] noteCounts;
     private ArrayList<Integer>[] velocityHistory;
     private HSBColor[] palette;
     private static final int MAX_VELOCITY = 127;
 
-    public MidiToPalette() {
+    /**
+     * Constructor for the NoteDistance class. Prepare storage for notes played,
+     * velocity history, and initialize color palette.
+     */
+
+    public NoteDistance() {
         noteCounts = new int[12];
         velocityHistory = (ArrayList<Integer>[]) new ArrayList[12];
         for (int i = 0; i < 12; i++) {
@@ -26,7 +47,40 @@ public class MidiToPalette {
         }
     }
 
+    /**
+     * Implements PaletteAlgorithm add method. This algorithm does not make use of
+     * the octave parameter. The color palette is updated on note add.
+     * @param note The note played in integer format, from 0 to 11. The notes begin
+     *             with C - (C, C#, D, D#, E, F, F#, G, G#, A, A#, B).
+     * @param velocity The velocity of the note played. This number marks the intensity
+     *                 and ranges from 0 to 127.
+     * @param octave The octave of the note played in integer format, from 0 to 8(?).
+     */
 
+    public void add(int note, int velocity, int octave) {
+        noteCounts[note]++;
+        velocityHistory[note].add(velocity);
+        updatePalette();
+    }
+
+    /**
+     * Implements PaletteAlgorithm getColor method. Uses the HSBColor getColor
+     * method to retrieve Color objects of each color.
+     * @return colors An array of 5 Color objects.
+     */
+
+    public Color[] getColors() {
+        Color[] colors = new Color[5];
+        for(int i = 0; i < colors.length; i++) {
+            colors[i] = palette[i].getColor();
+        }
+        return colors;
+    }
+
+    /**
+     * The updatePalette method is used to calculate the color palette, using the
+     * current count of notes, and velocity history.
+     */
 
     private void updatePalette() {
 
@@ -85,34 +139,31 @@ public class MidiToPalette {
 
         // perform algorithm 0-4 times, depending on number of unique notes
         for (int i = 1; i < 5 && i < uniqueNotes; i++) {
-            System.out.println("=================================");
             int distance = getNoteDistance(noteTracker[0], noteTracker[i]);
-            System.out.println("Base: " + noteTracker[0] + " offset: " + noteTracker[i]);
-            System.out.println("Dist: " + distance);
 
             float normalizedOffset = (float)sortedCounts[i] / (float)sortedCounts[0];
-            System.out.println("SC0: " + sortedCounts[0] + " SCi: " + sortedCounts[i]);
-
-            System.out.println("NO: " + normalizedOffset);
 
             float newHueDistance = ((float)1 / (float)noteCounts.length) * (float)distance * normalizedOffset;
 
-            System.out.println("BaseHue: " + baseHue);
-            System.out.println("NHD: " + newHueDistance);
-
             float newHue = (baseHue + newHueDistance) % 1.0f;
-
-            System.out.println("NewHue: " + newHue);
 
             palette[i].setHue(newHue);
             palette[i].setSaturation(normalizedVelocity[i] * ((sortedVel[i] * 100) / MAX_VELOCITY) );
 
-            System.out.println("SortedVel " + sortedVel[i]);
             palette[i].setBrightness(normalizedVelocity[i] * ((sortedVel[i] * 100) / MAX_VELOCITY) );
         }
     }
 
+    /**
+     * The normalizeVector method is used to normalize values of an array according
+     * to the highest value stored in that array.
+     * @return array The normalized array.
+     */
+
     private float[] normalizeVector(float array[]) {
+        // clone our array
+        array = array.clone();
+
         float maxValue = 0.0f;
         for (int i = 0; i < array.length; i++) {
             if (array[i] > maxValue)
@@ -126,19 +177,30 @@ public class MidiToPalette {
         return array;
     }
 
+    /**
+     * Retreive the note distance between two notes.
+     * @param base The base note (0 to 11)
+     * @param offset The offset note (0 to 11)
+     * @return The distance between the two notes
+     */
+
     private int getNoteDistance(int base, int offset) {
         return offset - base;
     }
 
-    public void add(int note, int velocity) {
-        noteCounts[note]++;
-        velocityHistory[note].add(velocity);
-        updatePalette();
+    /**
+     * Return the average velocity of a note.
+     * @param note The index of the desired note (0 to 11)
+     * @return The average velocity.
+     */
+
+    private double getAverageVelocity(int note) {
+        return velocityHistory[note].stream().mapToInt(val -> val).average().orElse(0.0);
     }
 
-    private double getAverageVelocity(int i) {
-        return velocityHistory[i].stream().mapToInt(val -> val).average().orElse(0.0);
-    }
+    /**
+     * The printMe method is used to print all values for debugging purposes.
+     */
 
     public void printMe() {
         System.out.println(Arrays.toString(noteCounts));
@@ -155,11 +217,5 @@ public class MidiToPalette {
             System.out.print("{" + palette[i].getString() + "} ");
     }
 
-    public Color[] getColors() {
-        Color[] colors = new Color[5];
-        for(int i = 0; i < colors.length; i++) {
-            colors[i] = palette[i].getColor();
-        }
-        return colors;
-    }
+
 }
