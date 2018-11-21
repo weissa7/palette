@@ -12,7 +12,7 @@ import java.awt.*;
  * @since 2018-11-21
  */
 
-public class ColorDrift {
+public class ColorDrift implements PaletteAlgorithm {
 
     private Color[] palette;
     private int currentColor;
