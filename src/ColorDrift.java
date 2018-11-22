@@ -5,7 +5,7 @@ import java.awt.*;
  *
  * The algorithm begins with all 5 colors on Gray values, and only lets them move
  * in small steps at a time. This will create a smooth transition over time for
- * a better experience during real-play.
+ * a better experience during live-play.
  *
  * @author Aaron Weiss
  * @version 1.0

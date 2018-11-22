@@ -8,16 +8,37 @@
 
 ![](saas.png)
 
+*************************************************
+*    _______                                    *
+*   | ▉ ▉ ▉ |            ░░░░░░ ▒▒▒▒▒▒ ▓▓▓▓▓▓   *
+*   | ▉ ▉ ▉ | ------>    ░░░░░░ ▒▒▒▒▒▒ ▓▓▓▓▓▓   *
+*   |_______|            ░░░░░░ ▒▒▒▒▒▒ ▓▓▓▓▓▓   *
+*                                               *
+*************************************************
 
 # Introduction
 
 Palette is a simple application created in Java to provide therapeutic entertainment by providing color representations of audio.
-By providing MIDI input, either by using a MIDI keyboard or from file, Palette will generate a unique color palette to said song.
+By providing MIDI input through a MIDI keyboard or from a file, Palette will generate a color palette unique to what is played.
 
-## Development - Getting Started
+# User Guide
+
+## Requirements
+
+## Functionality
+
+### From File
+
+### Live Play
+
+## Output
+
+# For Developers
+
+## Getting Started
 
 Palette is open source, and is easy to get started working on.
-The following technologies are recommended/required:
+The following technologies are required:
  * [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) - A professional Java IDE by JetBrains.
  * [Java 11 SDK](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html) - Oracle's Java SDK, latest release.
 
@@ -28,7 +49,43 @@ Once IDEA is installed, execute the program. On the New Project page, select "Ch
 Provide the project's GitHub URL: [https://github.com/weissa7/palette](https://github.com/weissa7/palette) and the project will be initialized!
 Build the project, and the program should be ready to execute.
 
+## Project Overview
 
+## Source Descriptions
+
+This section covers the descriptions of every relevant file available in the project. It is to provide a brief overview of said file. More descriptive
+documentation may be found within the files.
+
+(###) ColorDrift (class))
+
+A simple algorithm that generates a color palette based on small movements from a gray center.
+
+(###) HSBColor (class))
+
+A class that utilizes the hue - saturation - brightness color system for holding color information.
+
+(###) NoteDistance (class))
+
+A complex algorithm that utilizes the distance between music notes to generate a complementary color palette.
+
+(###) PaletteAlgorithm (interface))
+
+An interface to be used when implementing new color-generating algorithms.
+
+(###) PaletteForm (class))
+
+The main program, using Swing to create a GUI interface.
+
+# Support
+
+Having trouble? Leave a GitHub issue, or contact one of us:
+
+    Person   |   Email              |
+-------------|----------------------|
+Shaun        |  cardons4@tcnj.edu   |
+Aaron        |  weissa7@tcnj.edu    |
+Alex         |  cretela1@tcnj.edu   |
+Sarah        |  almedas1@tcnj.edu   |
 
 
 
