@@ -63,7 +63,7 @@ public class PaletteForm {
 
                     // input is instantiated in the init() method
                     input.open();
-                    output.open();
+                    //output.open();
 
                     transmitter = input.getTransmitter();
 
@@ -76,8 +76,8 @@ public class PaletteForm {
                     // Output info fed through custom device to proper receiver
                     myDevice.setReceiver(receiver);
 
-                    Receiver out_receiver = output.getReceiver();
-                    myDevice.setReceiver(out_receiver);
+                    //Receiver out_receiver = output.getReceiver();
+                    //myDevice.setReceiver(out_receiver);
 
                     // Create a new sequence
                     Sequence seq = new Sequence(Sequence.PPQ, 24);
@@ -93,6 +93,8 @@ public class PaletteForm {
                     colorPaletteLabel.setText("Awaiting MIDI input...");
 
                     chord = new ArrayList<String>();
+
+                    toColor = null;
                     toColor = new NoteDistance();
                     //toColor = new ColorDrift();
 
@@ -141,6 +143,8 @@ public class PaletteForm {
 
                 init();
 
+
+
                 try{
                     FileDialog fd = new FileDialog(new JFrame());
                     fd.setFile("*.mid");
@@ -153,8 +157,11 @@ public class PaletteForm {
 
                     File playFile = new File(filePath);
                     InputStream ios = new BufferedInputStream(new FileInputStream(playFile));
+
+
                     //ColorDrift runner = new ColorDrift();
-                    NoteDistance runner = new NoteDistance();
+                    toColor = null;
+                    toColor = new NoteDistance();
                     /*sequencer = MidiSystem.getSequencer(false);
                     sequencer.setSequence(ios);
                     sequencer.open();
@@ -176,6 +183,7 @@ public class PaletteForm {
                         trackNumber++;
 //                        System.out.println("Track " + trackNumber + ": size = " + track.size());
                         System.out.println();
+
                         for (int i=0; i < track.size(); i++) {
                             MidiEvent event = track.get(i);
 //                            System.out.print("@" + event.getTick() + " ");
@@ -190,7 +198,8 @@ public class PaletteForm {
                                     String noteName = NOTE_NAMES[note];
                                     int velocity = sm.getData2();
 //                                    System.out.println("Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
-                                    runner.add(note, velocity, octave);
+                                    if (velocity > 0)
+                                        toColor.add(note, velocity, octave);
 
                                 } else if (sm.getCommand() == NOTE_OFF) {
                                     int key = sm.getData1();
@@ -210,47 +219,7 @@ public class PaletteForm {
                         System.out.println();
                     }
 
-                    /*for (Track track : seq.getTracks()) {
-                        for(int i = 0; i < track.size(); i++) {
-                            MidiEvent event = track.get(i);
-                            MidiMessage message = event.getMessage();
-                            int NOTE_ON = 0x90;
-                            int NOTE_OFF = 0x80;
-                            System.out.println("Test");
-
-                            if (message instanceof ShortMessage) {
-                                ShortMessage sm = (ShortMessage) message;
-                                System.out.println("Sm");
-                                if (sm.getCommand() == NOTE_ON) {
-                                    int key = sm.getData1();
-                                    int octave = (key / 12)-1;
-                                    int note = key % 12;
-                                    //String noteName = NOTE_NAMES[note];
-                                    int velocity = sm.getData2();
-                                    System.out.println(event.getTick() + " " + sm.getChannel() + " " + key + " " + octave + " " + note + " " + velocity);
-                                    // When velocity is above zero, the key was pressed
-                                    // Add to chord
-                                    if (velocity > 0) {
-                                        System.out.println("Adding note");
-                                        runner.add(note, velocity, octave);
-                                    }
-
-                                } else if (sm.getCommand() == NOTE_OFF) {
-                                    int key = sm.getData1();
-                                    int octave = (key / 12)-1;
-                                    int note = key % 12;
-                                    //String noteName = NOTE_NAMES[note];
-                                    int velocity = sm.getData2();
-                                    System.out.println("Note off, " + octave + " key=" + key + " velocity: " + velocity);
-                                }
-
-                            }
-                        }
-                    }*/
-
-
-
-                    Color[] colors = runner.getColors();
+                    Color[] colors = toColor.getColors();
 
                     System.out.println(colors[0]);
 
@@ -264,10 +233,6 @@ public class PaletteForm {
                     color2Label.setText(String.format("#%02x%02x%02x", colors[2].getRed(), colors[2].getGreen(), colors[2].getBlue()));
                     color3Label.setText(String.format("#%02x%02x%02x", colors[3].getRed(), colors[3].getGreen(), colors[3].getBlue()));
                     color4Label.setText(String.format("#%02x%02x%02x", colors[4].getRed(), colors[4].getGreen(), colors[4].getBlue()));
-
-
-
-
 
                 } catch (NullPointerException npe) {
                     System.out.println("No File Chosen");
@@ -433,6 +398,11 @@ public class PaletteForm {
                     color2.setBackground(colors[2]);
                     color3.setBackground(colors[3]);
                     color4.setBackground(colors[4]);
+                    color0Label.setText(String.format("#%02x%02x%02x", colors[0].getRed(), colors[0].getGreen(), colors[0].getBlue()));
+                    color1Label.setText(String.format("#%02x%02x%02x", colors[1].getRed(), colors[1].getGreen(), colors[1].getBlue()));
+                    color2Label.setText(String.format("#%02x%02x%02x", colors[2].getRed(), colors[2].getGreen(), colors[2].getBlue()));
+                    color3Label.setText(String.format("#%02x%02x%02x", colors[3].getRed(), colors[3].getGreen(), colors[3].getBlue()));
+                    color4Label.setText(String.format("#%02x%02x%02x", colors[4].getRed(), colors[4].getGreen(), colors[4].getBlue()));
 
 
                 }
