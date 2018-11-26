@@ -33,7 +33,7 @@ public class PaletteForm {
     private JLabel color3Label;
     private JLabel color4Label;
 
-    private static String inputName  = "Axiom";
+    private static String inputName  = "Keyboard";
     private static String outputName = "Gervill";
     private MidiDevice input;
     private MidiDevice output;
@@ -44,8 +44,8 @@ public class PaletteForm {
     private Receiver receiver;
     private MyMidiDevice myDevice;
     private ArrayList<String> chord;
-    //NoteDistance toColor;
-    ColorDrift toColor;
+    NoteDistance toColor;
+    //ColorDrift toColor;
 
     public PaletteForm() {
 
@@ -93,8 +93,8 @@ public class PaletteForm {
                     colorPaletteLabel.setText("Awaiting MIDI input...");
 
                     chord = new ArrayList<String>();
-                    //toColor = new NoteDistance();
-                    toColor = new ColorDrift();
+                    toColor = new NoteDistance();
+                    //toColor = new ColorDrift();
 
                     recordButton.setEnabled(false);
                     stopButton.setEnabled(true);
@@ -153,7 +153,8 @@ public class PaletteForm {
 
                     File playFile = new File(filePath);
                     InputStream ios = new BufferedInputStream(new FileInputStream(playFile));
-                    ColorDrift runner = new ColorDrift();
+                    //ColorDrift runner = new ColorDrift();
+                    NoteDistance runner = new NoteDistance();
                     /*sequencer = MidiSystem.getSequencer(false);
                     sequencer.setSequence(ios);
                     sequencer.open();
