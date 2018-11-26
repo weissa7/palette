@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="PaletteForm">
-  <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="0" left="0" bottom="0" right="0"/>
+  <grid id="27dc6" binding="main" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="10" bottom="10" right="10"/>
     <constraints>
       <xy x="20" y="20" width="500" height="438"/>
     </constraints>
@@ -20,7 +20,7 @@
           <component id="a38a7" class="javax.swing.JButton" binding="recordButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <gridbag top="0" left="5" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <enabled value="true"/>
@@ -34,7 +34,7 @@
           <component id="6a7d9" class="javax.swing.JButton" binding="stopButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <gridbag top="0" left="5" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <enabled value="true"/>
@@ -45,7 +45,7 @@
           <component id="7f32b" class="javax.swing.JButton" binding="uploadButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <gridbag top="0" left="5" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="Upload"/>
@@ -56,44 +56,63 @@
       <grid id="9b713" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="true">
             <minimum-size width="300" height="150"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <enabled value="true"/>
+        </properties>
         <border type="none"/>
         <children>
-          <component id="f790d" class="javax.swing.JLabel" binding="noteLabel">
+          <grid id="48179" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="true">
+                <minimum-size width="300" height="150"/>
+              </grid>
             </constraints>
             <properties>
-              <text value="Press 'Record' to start the MIDI session or 'Upload' to upload your own file."/>
+              <enabled value="true"/>
             </properties>
-          </component>
+            <border type="none"/>
+            <children>
+              <component id="3482d" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Press 'Record' to start the MIDI session or 'Upload' to upload your own file."/>
+                </properties>
+              </component>
+            </children>
+          </grid>
         </children>
       </grid>
-      <grid id="caea6" binding="colorPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="0" left="0" bottom="0" right="0"/>
+      <grid id="caea6" binding="colorPanel" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="10" left="10" bottom="10" right="10"/>
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
-        <border type="none"/>
+        <border type="line"/>
         <children>
           <grid id="66d4e" binding="color0" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="-1" height="150"/>
+              </grid>
             </constraints>
             <properties>
-              <toolTipText value="Color1"/>
+              <toolTipText value="Click To Copy to Clipboard"/>
             </properties>
-            <border type="none">
+            <border type="bevel-raised">
               <font/>
+              <title-color color="-4473925"/>
             </border>
             <children>
-              <component id="2fa7a" class="javax.swing.JLabel">
+              <component id="2fa7a" class="javax.swing.JLabel" binding="color0Label">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -106,12 +125,18 @@
           <grid id="a565c" binding="color1" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="-1" height="150"/>
+              </grid>
             </constraints>
-            <properties/>
-            <border type="none"/>
+            <properties>
+              <toolTipText value="Click To Copy to Clipboard"/>
+            </properties>
+            <border type="bevel-raised">
+              <title-color color="-4473925"/>
+            </border>
             <children>
-              <component id="7c266" class="javax.swing.JLabel">
+              <component id="7c266" class="javax.swing.JLabel" binding="color1Label">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -124,12 +149,18 @@
           <grid id="c0b65" binding="color2" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="-1" height="150"/>
+              </grid>
             </constraints>
-            <properties/>
-            <border type="none"/>
+            <properties>
+              <toolTipText value="Click To Copy to Clipboard"/>
+            </properties>
+            <border type="bevel-raised">
+              <title-color color="-4473925"/>
+            </border>
             <children>
-              <component id="11325" class="javax.swing.JLabel">
+              <component id="11325" class="javax.swing.JLabel" binding="color2Label">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -142,12 +173,18 @@
           <grid id="6bfe3" binding="color3" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="-1" height="150"/>
+              </grid>
             </constraints>
-            <properties/>
-            <border type="none"/>
+            <properties>
+              <toolTipText value="Click To Copy to Clipboard"/>
+            </properties>
+            <border type="bevel-raised">
+              <title-color color="-4473925"/>
+            </border>
             <children>
-              <component id="1fb08" class="javax.swing.JLabel">
+              <component id="1fb08" class="javax.swing.JLabel" binding="color3Label">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -160,12 +197,18 @@
           <grid id="ec37c" binding="color4" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="-1" height="150"/>
+              </grid>
             </constraints>
-            <properties/>
-            <border type="none"/>
+            <properties>
+              <toolTipText value="Click To Copy to Clipboard"/>
+            </properties>
+            <border type="bevel-raised">
+              <title-color color="-4473925"/>
+            </border>
             <children>
-              <component id="90cae" class="javax.swing.JLabel">
+              <component id="90cae" class="javax.swing.JLabel" binding="color4Label">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -177,6 +220,14 @@
           </grid>
         </children>
       </grid>
+      <component id="f790d" class="javax.swing.JLabel" binding="colorPaletteLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Color Palette"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>

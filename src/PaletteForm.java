@@ -1,6 +1,8 @@
 import javax.sound.midi.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.io.*;
 
@@ -17,7 +19,7 @@ public class PaletteForm {
     private JPanel main;
     private JButton recordButton;
     private JButton stopButton;
-    private JLabel noteLabel;
+    private JLabel colorPaletteLabel;
     private JButton uploadButton;
     private JPanel colorPanel;
     private JPanel color0;
@@ -25,8 +27,13 @@ public class PaletteForm {
     private JPanel color2;
     private JPanel color3;
     private JPanel color4;
+    private JLabel color0Label;
+    private JLabel color1Label;
+    private JLabel color2Label;
+    private JLabel color3Label;
+    private JLabel color4Label;
 
-    private static String inputName  = "hw";
+    private static String inputName  = "Axiom";
     private static String outputName = "Gervill";
     private MidiDevice input;
     private MidiDevice output;
@@ -83,7 +90,7 @@ public class PaletteForm {
                     // And start recording
                     sequencer.startRecording();
 
-                    noteLabel.setText("Awaiting MIDI input...");
+                    colorPaletteLabel.setText("Awaiting MIDI input...");
 
                     chord = new ArrayList<String>();
                     //toColor = new NoteDistance();
@@ -97,7 +104,7 @@ public class PaletteForm {
                     System.out.println("Midi Unavailable exception.");
                 } catch (Exception ex){
                     System.out.println("Exception - MIDI Keyboard not found?");
-                    noteLabel.setText("MIDI Keyboard not found.");
+                    colorPaletteLabel.setText("MIDI Keyboard not found.");
                 }
 
             }
@@ -110,7 +117,7 @@ public class PaletteForm {
 
                     transmitter.setReceiver(receiver);
 
-                    noteLabel.setText("Session saved: MyTestMidiFile.mid");
+                    colorPaletteLabel.setText("Session saved: MyTestMidiFile.mid");
 
                     //save the sequence and stick it in a file
                     Sequence tmp = sequencer.getSequence();
@@ -166,22 +173,22 @@ public class PaletteForm {
                     int trackNumber = 0;
                     for (Track track :  sequence.getTracks()) {
                         trackNumber++;
-                        System.out.println("Track " + trackNumber + ": size = " + track.size());
+//                        System.out.println("Track " + trackNumber + ": size = " + track.size());
                         System.out.println();
                         for (int i=0; i < track.size(); i++) {
                             MidiEvent event = track.get(i);
-                            System.out.print("@" + event.getTick() + " ");
+//                            System.out.print("@" + event.getTick() + " ");
                             MidiMessage message = event.getMessage();
                             if (message instanceof ShortMessage) {
                                 ShortMessage sm = (ShortMessage) message;
-                                System.out.print("Channel: " + sm.getChannel() + " ");
+//                                System.out.print("Channel: " + sm.getChannel() + " ");
                                 if (sm.getCommand() == NOTE_ON) {
                                     int key = sm.getData1();
                                     int octave = (key / 12)-1;
                                     int note = key % 12;
                                     String noteName = NOTE_NAMES[note];
                                     int velocity = sm.getData2();
-                                    System.out.println("Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
+//                                    System.out.println("Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
                                     runner.add(note, velocity, octave);
 
                                 } else if (sm.getCommand() == NOTE_OFF) {
@@ -190,12 +197,12 @@ public class PaletteForm {
                                     int note = key % 12;
                                     String noteName = NOTE_NAMES[note];
                                     int velocity = sm.getData2();
-                                    System.out.println("Note off, " + noteName + octave + " key=" + key + " velocity: " + velocity);
+//                                    System.out.println("Note off, " + noteName + octave + " key=" + key + " velocity: " + velocity);
                                 } else {
-                                    System.out.println("Command:" + sm.getCommand());
+//                                    System.out.println("Command:" + sm.getCommand());
                                 }
                             } else {
-                                System.out.println("Other message: " + message.getClass());
+//                                System.out.println("Other message: " + message.getClass());
                             }
                         }
 
@@ -251,13 +258,19 @@ public class PaletteForm {
                     color2.setBackground(colors[2]);
                     color3.setBackground(colors[3]);
                     color4.setBackground(colors[4]);
+                    color0Label.setText(String.format("#%02x%02x%02x", colors[0].getRed(), colors[0].getGreen(), colors[0].getBlue()));
+                    color1Label.setText(String.format("#%02x%02x%02x", colors[1].getRed(), colors[1].getGreen(), colors[1].getBlue()));
+                    color2Label.setText(String.format("#%02x%02x%02x", colors[2].getRed(), colors[2].getGreen(), colors[2].getBlue()));
+                    color3Label.setText(String.format("#%02x%02x%02x", colors[3].getRed(), colors[3].getGreen(), colors[3].getBlue()));
+                    color4Label.setText(String.format("#%02x%02x%02x", colors[4].getRed(), colors[4].getGreen(), colors[4].getBlue()));
+
 
 
 
 
                 } catch (NullPointerException npe) {
                     System.out.println("No File Chosen");
-                    noteLabel.setText("No file uploaded.  Please press 'Record' to start a session or upload a file.");
+                    colorPaletteLabel.setText("No file uploaded.  Please press 'Record' to start a session or upload a file.");
                 } catch (InvalidMidiDataException imde) {
                     System.out.println("Invalid Midi Data Exception");
                 } catch (IOException ioe) {
@@ -270,11 +283,56 @@ public class PaletteForm {
             }
 
         });
+        color0.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(new StringSelection(color0Label.getText()), null);
+                colorPaletteLabel.setText("Color Palette - Copied " + color0Label.getText() +" to clipboard");
+            }
+        });
+        color1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(new StringSelection(color1Label.getText()), null);
+                colorPaletteLabel.setText("Color Palette - Copied " + color1Label.getText() +" to clipboard");
+            }
+        });
+        color2.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(new StringSelection(color2Label.getText()), null);
+                colorPaletteLabel.setText("Color Palette - Copied " + color2Label.getText() +" to clipboard");
+            }
+        });
+        color3.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(new StringSelection(color3Label.getText()), null);
+                colorPaletteLabel.setText("Color Palette - Copied " + color3Label.getText() +" to clipboard");
+            }
+        });
+        color4.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(new StringSelection(color4Label.getText()), null);
+                colorPaletteLabel.setText("Color Palette - Copied " + color4Label.getText() +" to clipboard");
+            }
+        });
     }
 
     public static void main(String[] args) {
         try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch(Exception ignored){}
 
         JFrame frame = new JFrame("Palette");
@@ -293,7 +351,7 @@ public class PaletteForm {
 
             for (Info inf : info) {
                 String name = inf.getName().replace(" ", "");
-                System.out.println("\"NAME:" + name + "\"");
+                System.out.println("\"NAME: " + name + "\"");
                 if (name.contains(inputName) && !inputFound) {
                     input = MidiSystem.getMidiDevice(inf);
                     inputFound = true;
@@ -365,7 +423,7 @@ public class PaletteForm {
                     }
 
                     // Display chord
-                    noteLabel.setText(chord.toString());
+                    colorPaletteLabel.setText(chord.toString());
 
                     Color[] colors = toColor.getColors();
 
@@ -390,7 +448,7 @@ public class PaletteForm {
                     //System.out.println("Command:" + sm.getCommand());
                 }
             } else {
-                System.out.println("Other message: " + message.getClass());
+//                System.out.println("Other message: " + message.getClass());
             }
             this.getReceiver().send(message, timeStamp);
         }
