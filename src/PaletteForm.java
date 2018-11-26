@@ -32,6 +32,7 @@ public class PaletteForm {
     private JLabel color2Label;
     private JLabel color3Label;
     private JLabel color4Label;
+    private JLabel chordLabel;
 
     private static String inputName  = "Keyboard";
     private static String outputName = "Gervill";
@@ -395,7 +396,9 @@ public class PaletteForm {
                     // Display chord
                     colorPaletteLabel.setText(chord.toString());
 
-                    System.out.print(isMajorMinor(chord2));
+                    //System.out.print(isMajorMinor(chord2));
+
+                    chordLabel.setText(isMajorMinor(chord2));
 
                     Color[] colors = toColor.getColors();
 
