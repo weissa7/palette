@@ -44,6 +44,7 @@ public class PaletteForm {
     private Receiver receiver;
     private MyMidiDevice myDevice;
     private ArrayList<String> chord;
+    private ArrayList<String> chord2;
     NoteDistance toColor;
     //ColorDrift toColor;
 
@@ -93,6 +94,8 @@ public class PaletteForm {
                     colorPaletteLabel.setText("Awaiting MIDI input...");
 
                     chord = new ArrayList<String>();
+                    chord2 = new ArrayList<String>();
+
 
                     toColor = null;
                     toColor = new NoteDistance();
@@ -142,8 +145,6 @@ public class PaletteForm {
             public void actionPerformed(ActionEvent e) {
 
                 init();
-
-
 
                 try{
                     FileDialog fd = new FileDialog(new JFrame());
@@ -379,6 +380,7 @@ public class PaletteForm {
                     // Add to chord
                     if (velocity > 0 && !chord.contains(noteName + octave)) {
                         chord.add(noteName + octave);
+                        chord2.add(octave+noteName);
                         toColor.add(note, velocity, octave);
                     }
 
@@ -386,10 +388,14 @@ public class PaletteForm {
                     // Remove from chord
                     if (velocity == 0) {
                         chord.remove(noteName + octave);
+                        chord2.remove(octave+noteName);
+
                     }
 
                     // Display chord
                     colorPaletteLabel.setText(chord.toString());
+
+                    System.out.print(isMajorMinor(chord2));
 
                     Color[] colors = toColor.getColors();
 
@@ -423,5 +429,89 @@ public class PaletteForm {
             }
             this.getReceiver().send(message, timeStamp);
         }
+    }
+
+    private String isMajorMinor(ArrayList<String> notes) {
+        int chordSize = notes.size();
+        if (chordSize < 3){
+            return "";
+        }
+
+        String[] arr1 = {"A", "A#", "B", "C", "C#","D", "D#", "E", "F", "F#","G", "G#"};
+        ArrayList<String> notesMaster = new ArrayList<String>(Arrays.asList(arr1));
+
+        String[] arr2 = {"C", "C#","D", "D#", "E", "F", "F#","G", "G#", "A", "A#", "B"}; //notes in keyboard order
+        ArrayList<String> notesMaster2 = new ArrayList<String>(Arrays.asList(arr2));
+
+
+        //sort based on order on the keyboard instead of order played
+        Collections.sort(notes, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                if (o1.substring(0, 1).equals(o2.substring(0, 1))) //in the same octave, use order specified above
+                    return Integer.compare(notesMaster2.indexOf(o1.substring(1)), notesMaster2.indexOf(o2.substring(1)));
+                else
+                    return o1.substring(0, 1).compareTo(o2.substring(0, 1));
+            }
+        });
+
+
+        ArrayList<Integer> intervals = new ArrayList<Integer>();
+        int noteLength = notes.get(0).length();
+        //System.out.println(notes.toString());
+        int indexA = notesMaster.indexOf(notes.get(0).substring(1));
+        int interval, indexB;
+
+
+
+        for(int i = 1; i < chordSize; i++){
+            noteLength = notes.get(i).length();
+            //System.out.println("CHORDSIZE: " + chordSize + " i = " + i);
+
+            //System.out.print(notes.get(i).substring(1));
+            // System.out.println(" - " + notes.get(i-1).substring(1));
+
+
+            //get the index of the note, use substring to exclude the octave
+            indexB = notesMaster.indexOf(notes.get(i).substring(1));
+            //System.out.println ( indexB + " - " + indexA + " = " + (indexB-indexA));
+            interval = indexB-indexA;
+
+            if (interval <0){
+                interval +=12;
+            }
+            intervals.add(interval);
+
+            indexA = indexB;
+
+        }
+        //System.out.println(intervals.toString());
+
+
+        //interval of 5/4/3 == Major
+        //intervals of 3/4/5 == Minor
+
+        if (intervals.contains(3) && intervals.contains(4)){
+            if (intervals.indexOf(3) < intervals.indexOf(4)){
+                return notes.get(0).substring(1) + " MINOR ROOT\n";
+            }
+            return  notes.get(0).substring(1) + " MAJOR ROOT\n";
+
+        }
+        else if (intervals.contains(5) && intervals.contains(4)){
+            if (intervals.indexOf(4) < intervals.indexOf(5)){
+                return notes.get(1).substring(1) + " MINOR, 2ND INVERSION\n";
+            }
+            return notes.get(1).substring(1) + " MAJOR, 2ND INVERSION\n";
+
+        }
+        else if (intervals.contains(3) && intervals.contains(5)) {
+            if (intervals.indexOf(3) > intervals.indexOf(5)) {
+                return notes.get(2).substring(1) + " MINOR  1ST INVERSION\n";
+            }
+            return notes.get(2).substring(1) + " MAJOR, 1ST INVERSION\n";
+
+        }
+        return "";
     }
 }
