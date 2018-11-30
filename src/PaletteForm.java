@@ -33,6 +33,7 @@ public class PaletteForm {
     private JLabel color3Label;
     private JLabel color4Label;
     private JLabel chordLabel;
+    private JComboBox algComboBox;
 
     private static String inputName  = "Keyboard";
     private static String outputName = "Gervill";
@@ -46,10 +47,22 @@ public class PaletteForm {
     private MyMidiDevice myDevice;
     private ArrayList<String> chord;
     private ArrayList<String> chord2;
-    NoteDistance toColor;
-    //ColorDrift toColor;
+
+    private PaletteAlgorithm algorithm[];
+    int selectedAlgorithm = 0;
+    private static int ALG_COUNT = 2;
+
+
+    public void initializeAlgorithms() {
+        algorithm = new PaletteAlgorithm[2];
+        algorithm[0] = new NoteDistance();
+        algorithm[1] = new ColorDrift();
+    }
 
     public PaletteForm() {
+
+
+        initializeAlgorithms();
 
         recordButton.addActionListener(new ActionListener() {
             @Override
@@ -98,9 +111,9 @@ public class PaletteForm {
                     chord2 = new ArrayList<String>();
 
 
-                    toColor = null;
-                    toColor = new NoteDistance();
-                    //toColor = new ColorDrift();
+                    initializeAlgorithms();
+
+//                    toColor = new ColorDrift();
 
                     recordButton.setEnabled(false);
                     stopButton.setEnabled(true);
@@ -161,17 +174,7 @@ public class PaletteForm {
                     InputStream ios = new BufferedInputStream(new FileInputStream(playFile));
 
 
-                    //ColorDrift runner = new ColorDrift();
-                    toColor = null;
-                    toColor = new NoteDistance();
-                    /*sequencer = MidiSystem.getSequencer(false);
-                    sequencer.setSequence(ios);
-                    sequencer.open();
-                    output.open();
-                    //Sequence seq = sequencer.getSequence();
-                    receiver = output.getReceiver();
-                    sequencer.getTransmitter().setReceiver(receiver);
-                    sequencer.start();*/
+                    initializeAlgorithms();
 
                     Sequence sequence = MidiSystem.getSequence(ios);
 
@@ -200,8 +203,11 @@ public class PaletteForm {
                                     String noteName = NOTE_NAMES[note];
                                     int velocity = sm.getData2();
 //                                    System.out.println("Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
-                                    if (velocity > 0)
-                                        toColor.add(note, velocity, octave);
+                                    if (velocity > 0) {
+                                        for (int j = 0; j < ALG_COUNT; j++) {
+                                            algorithm[j].add(note, velocity, octave);
+                                        }
+                                    }
 
                                 } else if (sm.getCommand() == NOTE_OFF) {
                                     int key = sm.getData1();
@@ -221,20 +227,7 @@ public class PaletteForm {
                         System.out.println();
                     }
 
-                    Color[] colors = toColor.getColors();
-
-                    System.out.println(colors[0]);
-
-                    color0.setBackground(colors[0]);
-                    color1.setBackground(colors[1]);
-                    color2.setBackground(colors[2]);
-                    color3.setBackground(colors[3]);
-                    color4.setBackground(colors[4]);
-                    color0Label.setText(String.format("#%02x%02x%02x", colors[0].getRed(), colors[0].getGreen(), colors[0].getBlue()));
-                    color1Label.setText(String.format("#%02x%02x%02x", colors[1].getRed(), colors[1].getGreen(), colors[1].getBlue()));
-                    color2Label.setText(String.format("#%02x%02x%02x", colors[2].getRed(), colors[2].getGreen(), colors[2].getBlue()));
-                    color3Label.setText(String.format("#%02x%02x%02x", colors[3].getRed(), colors[3].getGreen(), colors[3].getBlue()));
-                    color4Label.setText(String.format("#%02x%02x%02x", colors[4].getRed(), colors[4].getGreen(), colors[4].getBlue()));
+                    updateVisuals();
 
                 } catch (NullPointerException npe) {
                     System.out.println("No File Chosen");
@@ -294,6 +287,14 @@ public class PaletteForm {
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(new StringSelection(color4Label.getText()), null);
                 colorPaletteLabel.setText("Color Palette - Copied " + color4Label.getText() +" to clipboard");
+            }
+        });
+        algComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox cb = (JComboBox)e.getSource();
+                selectedAlgorithm = cb.getSelectedIndex();
+                updateVisuals();
             }
         });
     }
@@ -382,7 +383,9 @@ public class PaletteForm {
                     if (velocity > 0 && !chord.contains(noteName + octave)) {
                         chord.add(noteName + octave);
                         chord2.add(octave+noteName);
-                        toColor.add(note, velocity, octave);
+                        for (int j = 0; j < ALG_COUNT; j++) {
+                            algorithm[j].add(note, velocity, octave);
+                        }
                     }
 
                     // When velocity is zero, the key was released
@@ -390,32 +393,18 @@ public class PaletteForm {
                     if (velocity == 0) {
                         chord.remove(noteName + octave);
                         chord2.remove(octave+noteName);
-
                     }
 
                     // Display chord
                     colorPaletteLabel.setText(chord.toString());
 
-                    //System.out.print(isMajorMinor(chord2));
-
                     chordLabel.setText(isMajorMinor(chord2));
 
-                    Color[] colors = toColor.getColors();
-
-                    color0.setBackground(colors[0]);
-                    color1.setBackground(colors[1]);
-                    color2.setBackground(colors[2]);
-                    color3.setBackground(colors[3]);
-                    color4.setBackground(colors[4]);
-                    color0Label.setText(String.format("#%02x%02x%02x", colors[0].getRed(), colors[0].getGreen(), colors[0].getBlue()));
-                    color1Label.setText(String.format("#%02x%02x%02x", colors[1].getRed(), colors[1].getGreen(), colors[1].getBlue()));
-                    color2Label.setText(String.format("#%02x%02x%02x", colors[2].getRed(), colors[2].getGreen(), colors[2].getBlue()));
-                    color3Label.setText(String.format("#%02x%02x%02x", colors[3].getRed(), colors[3].getGreen(), colors[3].getBlue()));
-                    color4Label.setText(String.format("#%02x%02x%02x", colors[4].getRed(), colors[4].getGreen(), colors[4].getBlue()));
+                    updateVisuals();
 
 
                 }
-                // Never used, should probably be removed
+                // Some keyboards make use of NOTE_OFF events instead of velocity = 0
                 else if (sm.getCommand() == NOTE_OFF) {
                     int key = sm.getData1();
                     int octave = (key / 12)-1;
@@ -432,6 +421,21 @@ public class PaletteForm {
             }
             this.getReceiver().send(message, timeStamp);
         }
+    }
+
+    private void updateVisuals() {
+        Color[] colors = algorithm[selectedAlgorithm].getColors();
+
+        color0.setBackground(colors[0]);
+        color1.setBackground(colors[1]);
+        color2.setBackground(colors[2]);
+        color3.setBackground(colors[3]);
+        color4.setBackground(colors[4]);
+        color0Label.setText(String.format("#%02x%02x%02x", colors[0].getRed(), colors[0].getGreen(), colors[0].getBlue()));
+        color1Label.setText(String.format("#%02x%02x%02x", colors[1].getRed(), colors[1].getGreen(), colors[1].getBlue()));
+        color2Label.setText(String.format("#%02x%02x%02x", colors[2].getRed(), colors[2].getGreen(), colors[2].getBlue()));
+        color3Label.setText(String.format("#%02x%02x%02x", colors[3].getRed(), colors[3].getGreen(), colors[3].getBlue()));
+        color4Label.setText(String.format("#%02x%02x%02x", colors[4].getRed(), colors[4].getGreen(), colors[4].getBlue()));
     }
 
     private String isMajorMinor(ArrayList<String> notes) {

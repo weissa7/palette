@@ -40,7 +40,7 @@ public class ColorDrift implements PaletteAlgorithm {
 
         boolean increase = velocity > lastVelocity;
 
-        int step = 1;
+        int step = 7;
 
         if (!increase)
             step = -step;

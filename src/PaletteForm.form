@@ -19,7 +19,7 @@
         <children>
           <component id="a38a7" class="javax.swing.JButton" binding="recordButton">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="5" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
@@ -33,7 +33,7 @@
           </component>
           <component id="6a7d9" class="javax.swing.JButton" binding="stopButton">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <gridbag top="0" left="5" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
@@ -51,6 +51,31 @@
               <text value="Upload"/>
             </properties>
           </component>
+          <component id="90ed" class="javax.swing.JComboBox" binding="algComboBox">
+            <constraints>
+              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <model>
+                <item value="NoteDistance"/>
+                <item value="ColorDrift"/>
+              </model>
+              <toolTipText value="Choose the color generating algorithm you would lke to use."/>
+            </properties>
+          </component>
+          <hspacer id="31c01">
+            <constraints>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="2.0" weighty="0.0"/>
+            </constraints>
+          </hspacer>
+          <hspacer id="c66a1">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="2.0" weighty="0.0"/>
+            </constraints>
+          </hspacer>
         </children>
       </grid>
       <grid id="9b713" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
