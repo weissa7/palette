@@ -49,7 +49,7 @@ public class PaletteForm {
 
 
     private void initializeAlgorithms() {
-        algorithm = new PaletteAlgorithm[2];
+        algorithm = new PaletteAlgorithm[ALG_COUNT];
         algorithm[0] = new NoteDistance();
         algorithm[1] = new ColorDrift();
     }
