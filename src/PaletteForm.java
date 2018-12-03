@@ -30,7 +30,7 @@ public class PaletteForm {
     private JLabel chordLabel;
     private JComboBox algComboBox;
 
-    private static String inputName  = "Keyboard";
+    private static String inputName  = "MIDIIN3";
     private static String outputName = "Gervill";
     private MidiDevice input;
     private MidiDevice output;
@@ -122,15 +122,24 @@ public class PaletteForm {
 
                 transmitter.setReceiver(receiver);
 
-                colorPaletteLabel.setText("Session saved: MyTestMidiFile.mid");
-
                 //save the sequence and stick it in a file
                 Sequence tmp = sequencer.getSequence();
+
+                FileDialog saveFile = new FileDialog(new JFrame(), "Save", FileDialog.SAVE);
+                saveFile.setVisible(true);
+                String dir;
+                dir = saveFile.getDirectory();
+                midiFile = saveFile.getDirectory() + saveFile.getFile();
+//                System.out.println(dir);
+//                System.out.println(midiFile);
+
                 MidiSystem.write(tmp, 0, new File(midiFile));
+                colorPaletteLabel.setText("Session saved: " + saveFile.getFile());
+
                 recordButton.setEnabled(true);
                 stopButton.setEnabled(false);
-            } catch (IOException i) {
-                System.out.println("End exception.");
+            } catch (IOException i){
+                System.out.println("End Exception");
             } catch (NullPointerException npe) {
                 System.out.println("Null Pointer Exception");
             }
