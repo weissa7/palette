@@ -133,6 +133,8 @@ public class PaletteForm {
 
                 transmitter.setReceiver(receiver);
 
+                input.close();
+
                 //save the sequence and stick it in a file
                 Sequence midiSequence = sequencer.getSequence();
 
