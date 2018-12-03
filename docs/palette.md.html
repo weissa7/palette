@@ -74,6 +74,39 @@ A class that utilizes the hue - saturation - brightness color system for holding
 
 A complex algorithm that utilizes the distance between music notes to generate a complementary color palette.
 
+The best way to describe this algorithm is visually because it splits a color wheel into 12, 30 degree sections, 1 for each note.
+The orientation of the sequence is arbitrary, based on where the note with the highest count is placed on the wheel, so the angles wont
+necessarily look as pretty as 30, 60, 90; however, they will always be the same 30 degrees from one another
+![](images/degrees.png)
+
+If we consider a song example where:
+C is our most hit note with 100 hits,</br>
+D# is our 2nd most hit with 80 hits,</br>
+G# is our 3rd most hit with 70 hits,</br>
+F is our 4rd most hit with 50 hits,</br>
+A# is our 5th most hit with 40 hits,</br>
+then we have:
+
+![](images/with_numHits.png)
+
+To generate a color palette from this information, we will travel a percentage of the distance between the base color and each of the other 4 most hit notes.
+
+To determine the percentage, we divide each note's number of hits by the base note's number of hits and then multiply the result by 100.
+
+For example, the distance to A# is calculated by taking it's number of hits (40) and dividing it by the base's number of hits (100) and then multiplying the result by 100
+
+The resulting color is highlighted by a teal box
+
+![](images/continuous_A.png)
+
+The same calculation is followed for each of the other notes:
+
+![](images/continuous_G.png)![](images/continuous_F.png)![](images/continuous_D.png)
+
+This is the color palette generated:
+
+![](images/color_palette.png)
+
 (###) PaletteAlgorithm (interface))
 
 An interface to be used when implementing new color-generating algorithms.
