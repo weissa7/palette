@@ -10,6 +10,14 @@ import java.util.*; //this includes Scanner
 
 import javax.sound.midi.MidiDevice.Info;
 
+/**
+ * The PaletteForm class defines and operates the user interface for Palette.
+ *
+ * @author Shaun Cardone, Aaron Weiss, Alex Cretella, Sarah Almeda
+ * @version 1.0
+ * @since 2018-11-4
+ */
+
 public class PaletteForm {
 
     private JPanel main;
@@ -30,11 +38,7 @@ public class PaletteForm {
     private JLabel chordLabel;
     private JComboBox algComboBox;
 
-    private static String inputName  = "A25";
-    private static String outputName = "Gervill";
     private MidiDevice input;
-    private MidiDevice output;
-    private String midiFile = "MyTestMidiFile.mid";
 
     private Sequencer sequencer;
     private Transmitter transmitter;
@@ -47,13 +51,18 @@ public class PaletteForm {
     private int selectedAlgorithm = 0;
     private static int ALG_COUNT = 2;
 
-
+    /**
+     * Initialize all available color algorithms.
+     */
     private void initializeAlgorithms() {
         algorithm = new PaletteAlgorithm[ALG_COUNT];
         algorithm[0] = new NoteDistance();
         algorithm[1] = new ColorDrift();
     }
 
+    /**
+     * Constructor for main GUI.
+     */
     private PaletteForm() {
 
         initializeAlgorithms();
@@ -65,7 +74,7 @@ public class PaletteForm {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    init();
+                    setupMidiDevices();
 
                     sequencer = MidiSystem.getSequencer(); // default MIDI Sequencer
                     sequencer.open();
@@ -73,7 +82,7 @@ public class PaletteForm {
                     // Create a custom device that can listen to MidiEvents
                     myDevice = new MyMidiDevice();
 
-                    // input is instantiated in the init() method
+                    // input is instantiated in the setupMidiDevices() method
                     input.open();
 
                     transmitter = input.getTransmitter();
@@ -105,17 +114,19 @@ public class PaletteForm {
 
                     recordButton.setEnabled(false);
                     stopButton.setEnabled(true);
-                } catch (InvalidMidiDataException imde) {
-                    System.out.println("Invalid Midi exception.");
                 } catch (MidiUnavailableException mue) {
-                    System.out.println("Midi Unavailable exception.");
+                    JFrame frame = new JFrame();
+                    JOptionPane.showMessageDialog(frame,
+                            "MIDI unavailable - did you select the correct input?");
                 } catch (Exception ex){
-                    System.out.println("Exception - MIDI Keyboard not found?");
-                    colorPaletteLabel.setText("MIDI Keyboard not found.");
+                    JFrame frame = new JFrame();
+                    JOptionPane.showMessageDialog(frame,
+                            "Error - invalid MIDI device.");
                 }
 
             }
         });
+
         stopButton.addActionListener(e -> {
             try {
                 sequencer.stopRecording(); //stop recording
@@ -123,39 +134,46 @@ public class PaletteForm {
                 transmitter.setReceiver(receiver);
 
                 //save the sequence and stick it in a file
-                Sequence tmp = sequencer.getSequence();
+                Sequence midiSequence = sequencer.getSequence();
 
                 FileDialog saveFile = new FileDialog(new JFrame(), "Save", FileDialog.SAVE);
                 saveFile.setVisible(true);
-                midiFile = saveFile.getDirectory() + saveFile.getFile();
-                if(!midiFile.endsWith(".mid")){
-                    midiFile += ".mid";
+                String filename = saveFile.getFile();
+
+                if(filename != null) {
+                    if(!filename.endsWith(".mid")){
+                        filename += ".mid";
+                    }
+                    String midiFile = saveFile.getDirectory() + filename;
+                    MidiSystem.write(midiSequence, 0, new File(midiFile));
+                    colorPaletteLabel.setText("Session saved: " + saveFile.getFile());
+
+                } else {
+                    colorPaletteLabel.setText("Session ended unsaved.");
                 }
-                MidiSystem.write(tmp, 0, new File(midiFile));
-                colorPaletteLabel.setText("Session saved: " + saveFile.getFile());
 
                 recordButton.setEnabled(true);
                 stopButton.setEnabled(false);
             } catch (IOException i){
-                System.out.println("End Exception");
+                JFrame frame = new JFrame();
+                JOptionPane.showMessageDialog(frame,
+                        "I/O Exception");
             } catch (NullPointerException npe) {
-                System.out.println("Null Pointer Exception");
+                JFrame frame = new JFrame();
+                JOptionPane.showMessageDialog(frame,
+                        "Null Pointer Exception");
             }
 
         });
 
-        //Allows user to open and then play a file through the selected output device
-
         uploadButton.addActionListener(e -> {
-
-            init();
 
             try{
                 FileDialog fd = new FileDialog(new JFrame());
                 fd.setFile("*.mid");
                 fd.setVisible(true);
                 File[] f = fd.getFiles();
-                String filePath = null;
+                String filePath = "";
                 if (f.length > 0) {
                     filePath = fd.getFiles()[0].getAbsolutePath();
                 }
@@ -241,6 +259,10 @@ public class PaletteForm {
         });
     }
 
+    /**
+     * The main method - attempt to style to operating system look and feel.
+     */
+
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -253,32 +275,32 @@ public class PaletteForm {
         frame.setVisible(true);
     }
 
-    // Kind of spaghetti, relies on the MIDI keyboard having the name 'Keyboard' in it
-    // Maybe let the user choose MIDI input?
-    private void init(){
-        boolean outputFound = false, inputFound = false;
+    /**
+     * Prompt user with dialog to select which MIDI device they wish to use.
+     */
+    private void setupMidiDevices(){
+
         try {
             Info[] info = MidiSystem.getMidiDeviceInfo();
 
-            for (Info inf : info) {
-                String name = inf.getName().replace(" ", "");
-                System.out.println("\"NAME: " + name + "\"");
-                if (name.contains(inputName) && !inputFound) {
-                    input = MidiSystem.getMidiDevice(inf);
-                    inputFound = true;
-                }
-                if (name.contains(outputName) && !outputFound) {
-                    output = MidiSystem.getMidiDevice(inf);
-                    outputFound = true;
-                }
+            String names[] = new String[info.length];
+            for(int i = 0; i < info.length; i++) {
+                names[i] = info[i].getName();
             }
 
+            JFrame frame = new JFrame();
+            int n = JOptionPane.showOptionDialog(frame, "Please select MIDI device.", "Select Input", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, names, names[0]);
+
+            input = MidiSystem.getMidiDevice(info[n]);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Create a custom MIDI device to intercept messages & pass them along.
+     */
 
     private class MyMidiDevice implements Transmitter, Receiver
     {
@@ -300,7 +322,6 @@ public class PaletteForm {
         @Override
         public void close() { }
 
-        // Perform real-time computations on MidiMessages we receive
         @Override
         public void send(MidiMessage message, long timeStamp)
         {
@@ -308,6 +329,11 @@ public class PaletteForm {
             this.getReceiver().send(message, timeStamp);
         }
     }
+
+    /**
+     * Interpret information from a MIDI message. Update algorithms and various forms using the MIDI information.
+     * @param message a MidiMessage
+     */
 
     private void interpretMidi(MidiMessage message) {
         int NOTE_ON = 0x90;
@@ -366,6 +392,10 @@ public class PaletteForm {
 
     }
 
+    /**
+     * Update the colors displayed using the selected algorithm's palette.
+     */
+
     private void updateVisuals() {
         Color[] colors = algorithm[selectedAlgorithm].getColors();
 
@@ -381,6 +411,12 @@ public class PaletteForm {
         color4Label.setText(String.format("#%02x%02x%02x", colors[4].getRed(), colors[4].getGreen(), colors[4].getBlue()));
     }
 
+    /**
+     * Determine the major / minor construction of a chord.
+     * @param notes the string of notes played in the chord.
+     * @return a string describing the chord.
+     */
+
     private String isMajorMinor(ArrayList<String> notes) {
         int chordSize = notes.size();
         if (chordSize < 3){
@@ -393,7 +429,6 @@ public class PaletteForm {
         String[] arr2 = {"C", "C#","D", "D#", "E", "F", "F#","G", "G#", "A", "A#", "B"}; //notes in keyboard order
         ArrayList<String> notesMaster2 = new ArrayList<>(Arrays.asList(arr2));
 
-
         //sort based on order on the keyboard instead of order played
         notes.sort((o1, o2) -> {
             if (o1.substring(0, 1).equals(o2.substring(0, 1))) //in the same octave, use order specified above
@@ -402,26 +437,16 @@ public class PaletteForm {
                 return o1.substring(0, 1).compareTo(o2.substring(0, 1));
         });
 
-
         ArrayList<Integer> intervals = new ArrayList<>();
-        int noteLength = notes.get(0).length();
-        //System.out.println(notes.toString());
+
         int indexA = notesMaster.indexOf(notes.get(0).substring(1));
         int interval, indexB;
 
-
-
         for(int i = 1; i < chordSize; i++){
-            noteLength = notes.get(i).length();
-            //System.out.println("CHORDSIZE: " + chordSize + " i = " + i);
-
-            //System.out.print(notes.get(i).substring(1));
-            // System.out.println(" - " + notes.get(i-1).substring(1));
-
 
             //get the index of the note, use substring to exclude the octave
             indexB = notesMaster.indexOf(notes.get(i).substring(1));
-            //System.out.println ( indexB + " - " + indexA + " = " + (indexB-indexA));
+
             interval = indexB-indexA;
 
             if (interval <0){
@@ -430,10 +455,7 @@ public class PaletteForm {
             intervals.add(interval);
 
             indexA = indexB;
-
         }
-        //System.out.println(intervals.toString());
-
 
         //interval of 5/4/3 == Major
         //intervals of 3/4/5 == Minor
@@ -443,21 +465,18 @@ public class PaletteForm {
                 return notes.get(0).substring(1) + " MINOR ROOT\n";
             }
             return  notes.get(0).substring(1) + " MAJOR ROOT\n";
-
         }
         else if (intervals.contains(5) && intervals.contains(4)){
             if (intervals.indexOf(4) < intervals.indexOf(5)){
                 return notes.get(1).substring(1) + " MINOR, 2ND INVERSION\n";
             }
             return notes.get(1).substring(1) + " MAJOR, 2ND INVERSION\n";
-
         }
         else if (intervals.contains(3) && intervals.contains(5)) {
             if (intervals.indexOf(3) > intervals.indexOf(5)) {
                 return notes.get(2).substring(1) + " MINOR  1ST INVERSION\n";
             }
             return notes.get(2).substring(1) + " MAJOR, 1ST INVERSION\n";
-
         }
         return "";
     }
