@@ -30,7 +30,7 @@ public class PaletteForm {
     private JLabel chordLabel;
     private JComboBox algComboBox;
 
-    private static String inputName  = "MIDIIN3";
+    private static String inputName  = "A25";
     private static String outputName = "Gervill";
     private MidiDevice input;
     private MidiDevice output;
@@ -127,12 +127,10 @@ public class PaletteForm {
 
                 FileDialog saveFile = new FileDialog(new JFrame(), "Save", FileDialog.SAVE);
                 saveFile.setVisible(true);
-                String dir;
-                dir = saveFile.getDirectory();
                 midiFile = saveFile.getDirectory() + saveFile.getFile();
-//                System.out.println(dir);
-//                System.out.println(midiFile);
-
+                if(!midiFile.endsWith(".mid")){
+                    midiFile += ".mid";
+                }
                 MidiSystem.write(tmp, 0, new File(midiFile));
                 colorPaletteLabel.setText("Session saved: " + saveFile.getFile());
 
