@@ -37,7 +37,7 @@
               <gridbag top="0" left="5" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
-              <enabled value="true"/>
+              <enabled value="false"/>
               <text value="Stop"/>
               <visible value="true"/>
             </properties>
