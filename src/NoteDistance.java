@@ -29,6 +29,7 @@ public class NoteDistance implements PaletteAlgorithm {
     private ArrayList<Integer>[] velocityHistory;
     private HSBColor[] palette;
     private static final int MAX_VELOCITY = 127;
+    private static final int NUM_COLORS = 5; //predetermined number of colors for the final palette
 
     /**
      * Constructor for the NoteDistance class. Prepare storage for notes played,
@@ -38,11 +39,12 @@ public class NoteDistance implements PaletteAlgorithm {
     public NoteDistance() {
         noteCounts = new int[12];
         velocityHistory = (ArrayList<Integer>[]) new ArrayList[12];
+        //store velocities of each note in a vector to average at the end
         for (int i = 0; i < 12; i++) {
             velocityHistory[i] = new ArrayList<>();
         }
-        palette = new HSBColor[5];
-        for (int i = 0; i < 5; i++) {
+        palette = new HSBColor[NUM_COLORS];
+        for (int i = 0; i < NUM_COLORS; i++) {
             palette[i] = new HSBColor();
         }
     }
@@ -106,11 +108,13 @@ public class NoteDistance implements PaletteAlgorithm {
                     int tempCount = sortedCounts[j];
                     sortedCounts[j] = sortedCounts[j + 1];
                     sortedCounts[j + 1] = tempCount;
-
+                    
+                    //Makes sure that a note's index in noteTracker matches where the note's count was moved in sortedCounts
                     int tempTracker = noteTracker[j];
                     noteTracker[j] = noteTracker[j + 1];
                     noteTracker[j + 1] = tempTracker;
-
+                    
+                    //Makes sure that a note's velocity in sortedVel matches where the note was moved in sortedCounts
                     float tempVel = sortedVel[j];
                     sortedVel[j] = sortedVel[j + 1];
                     sortedVel[j + 1] = tempVel;
@@ -161,15 +165,17 @@ public class NoteDistance implements PaletteAlgorithm {
      */
 
     private float[] normalizeVector(float array[]) {
-        // clone our array
+        // clone our array so that we don't modify the original
         array = array.clone();
 
+        //first we find the note with the highest count
         float maxValue = 0.0f;
         for (int i = 0; i < array.length; i++) {
             if (array[i] > maxValue)
                 maxValue = array[i];
         }
 
+        //then divide each count by that max, in order to normalize
         for (int i = 0; i < array.length; i++) {
             array[i] /= maxValue;
         }
@@ -181,6 +187,11 @@ public class NoteDistance implements PaletteAlgorithm {
      * Retreive the note distance between two notes.
      * @param base The base note (0 to 11)
      * @param offset The offset note (0 to 11)
+     *     Recall:
+     *     // [ 0  1   2  3   4  5  6   7  8   9  10  11 ]
+     *     // [ C, C#, D, D#, E, F, F#, G, G#, A, A#,  B ]
+     *               EX: the distance from D to A = 7
+     *                   the distance from A to D = 7 as well
      * @return The distance between the two notes
      */
 
@@ -213,7 +224,7 @@ public class NoteDistance implements PaletteAlgorithm {
                 System.out.print(avg);
         }
         System.out.println("]");
-        for(int i = 0; i < 5; i++)
+        for(int i = 0; i < NUM_COLORS; i++)
             System.out.print("{" + palette[i].getString() + "} ");
     }
 
