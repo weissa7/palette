@@ -37,16 +37,50 @@ This application can be used on any operating system as long as Java is installe
 
 Java [https://www.java.com/en/download/](https://www.java.com/en/download/) is required to run Palette.
 
-Optionally, a MIDI keyboard may be connected via. USB to enhance interaction with the application. Keyboard sold separately.
+Optionally, a MIDI keyboard may be connected via USB to enhance interaction with the application. Keyboard sold separately.
 
 ## Functionality
 ### From File
 ![](images/upload.png)
 
+Using the upload feature, you can upload any music track stored in MIDI format (.mid extension).
+Palette will automatically create various color palettes that demonstrate the song.
+
 ### Live Play
 ![](images/record_stop.png)
 
+With a MIDI keyboard attached to your computer, pressing the 'record' button will begin a live session where the color palettes will be dynamically updated as you play!
+
+Before playing, a window will prompt asking which MIDI device you would like to use. Select the one that has a name closest to your device.
+The application will inform you if the device you selected was incorrect. If no input is detected, there may be a different device that will work.
+
+Once the Live Play session has started, you may begin playing on your keyboard.
+The application does not produce sound, so an external program or speaker for the keyboard is needed for audio feedback.
+
+Once completed, press the 'stop' button. You now have the option of saving your play to a MIDI file, or cancelling.
+
+### Algorithms
+![](images/algorithms.png)
+
+Palette offers multiple algorithms to generate colors for you. Using the dropdown, select which algorithm you would like to see.
+Algorithms may be switched at any time, and do not reset upon switching. This lets you compare colors for the song you are currently viewing.
+
+Current Algorithms available:
+ * NoteDistance
+ * ColorDrift
+ * Scribian
+
+See the Source Descriptions section in the Developer portion of this page for more details on what the algorithms are and how they work.
+
 ## Output
+![](images/output.png)
+
+The output of uploading / recording a song is a 5-color palette of colors.
+
+The hex values of each color are displayed.
+
+!!! Tip
+    You can click on each generated color to copy the hex value into your operating system's clipboard!
 
 # For Developers
 
@@ -125,6 +159,10 @@ An interface to be used when implementing new color-generating algorithms.
 (###) PaletteForm (class))
 
 The main program, using Swing to create a GUI interface.
+
+(###) Scribian (class))
+
+This algorithm represents Scribian Correspondence of the notes played. More info on this may be found [here](https://www.flutopedia.com/sound_color.htm).
 
 # Support
 

@@ -49,7 +49,7 @@ public class PaletteForm {
 
     private PaletteAlgorithm algorithm[];
     private int selectedAlgorithm = 0;
-    private static int ALG_COUNT = 2;
+    private static int ALG_COUNT = 3;
 
     /**
      * Initialize all available color algorithms.
@@ -58,6 +58,7 @@ public class PaletteForm {
         algorithm = new PaletteAlgorithm[ALG_COUNT];
         algorithm[0] = new NoteDistance();
         algorithm[1] = new ColorDrift();
+        algorithm[2] = new Scriabin();
     }
 
     /**

@@ -60,6 +60,7 @@
               <model>
                 <item value="NoteDistance"/>
                 <item value="ColorDrift"/>
+                <item value="Scribian"/>
               </model>
               <toolTipText value="Choose the color generating algorithm you would lke to use."/>
             </properties>
