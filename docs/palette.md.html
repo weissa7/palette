@@ -29,13 +29,16 @@ This program is intended to be used with a MIDI keyboard and it used to help tra
 ## System Overview:
 The program uses MIDI input through a file or the MIDI keyboard and reads the data that is sent/read from the MIDI input or file.  The program uses the data in the MIDI file such as the note, velocity, and other characteristics of the note to determine what the color of the note is.  This application can be used on any operating system as long as Java 11 is installed onto the device.
 
+![](images/UI.png)
+
 ## Requirements
 
 ## Functionality
-
 ### From File
+![](images/upload.png)
 
 ### Live Play
+![](images/record_stop.png)
 
 ## Output
 
@@ -77,7 +80,9 @@ A complex algorithm that utilizes the distance between music notes to generate a
 The best way to describe this algorithm is visually because it splits a color wheel into 12, 30 degree sections, 1 for each note.
 The orientation of the sequence is arbitrary, based on where the note with the highest count is placed on the wheel, so the angles wont
 necessarily look as pretty as 30, 60, 90; however, they will always be the same 30 degrees from one another
-![](images/degrees.png)
+
+
+![](images/degrees.png width="400px" height="400")
 
 If we consider a song example where:
 C is our most hit note with 100 hits,</br>
@@ -87,7 +92,7 @@ F is our 4rd most hit with 50 hits,</br>
 A# is our 5th most hit with 40 hits,</br>
 then we have:
 
-![](images/with_numHits.png)
+![](images/with_numHits.png width="400px" height="400")
 
 To generate a color palette from this information, we will travel a percentage of the distance between the base color and each of the other 4 most hit notes.
 
